@@ -709,14 +709,15 @@ img{
   #invitation .phone-screen img{
     display:block !important;
     width:100% !important;
-    height:auto !important;
-    min-height:0 !important;
+    height:100% !important;
+    min-height:100% !important;
     max-width:none !important;
-    object-fit:initial !important;
+    max-height:none !important;
+    object-fit:cover !important;
     object-position:top center !important;
-    transform:translateY(0);
-    animation:invitationInsidePhoneResponsive 10s cubic-bezier(.25,.7,.25,1) infinite !important;
-    will-change:transform;
+    transform:none !important;
+    animation:none !important;
+    will-change:auto !important;
   }
 
   #invitation .intro-copy{
