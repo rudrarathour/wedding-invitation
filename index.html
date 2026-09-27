@@ -708,7 +708,9 @@ img{
     max-width:none !important;
     object-fit:initial !important;
     object-position:top center !important;
+    transform:translateY(0);
     animation:invitationInsidePhoneResponsive 10s cubic-bezier(.25,.7,.25,1) infinite !important;
+    will-change:transform;
   }
 
   #invitation .intro-copy{
@@ -1173,9 +1175,29 @@ img{
 @keyframes invitationInsidePhoneResponsive{
   0%,18%{transform:translateY(0)}
   25%{transform:translateY(0)}
-  70%{transform:translateY(-30%)}
-  88%{transform:translateY(-36%)}
-  100%{transform:translateY(-38%)}
+  72%{transform:translateY(calc(var(--phone-scroll-distance, 0px) * -0.72))}
+  100%{transform:translateY(calc(var(--phone-scroll-distance, 0px) * -1))}
+}
+
+/* Scratch card: maximum 3 strokes, then reveal automatically */
+#scratchCanvas{
+  transition:opacity .6s ease,transform .6s ease;
+}
+#scratchCanvas.scratch-complete{
+  opacity:0;
+  transform:scale(1.03);
+  pointer-events:none;
+}
+
+/* Keep the mobile invitation artwork inside its phone and scroll by
+   the exact overflow amount, never by a guessed percentage. */
+@media(max-width:800px){
+  #invitation .phone{
+    isolation:isolate;
+  }
+  #invitation .phone-screen{
+    contain:layout paint;
+  }
 }
 
 </style></style>
@@ -1286,9 +1308,50 @@ img{
       scratchCtx.fillStyle='rgba(255,250,240,.9)';scratchCtx.font='600 17px Playfair Display';scratchCtx.textAlign='center';scratchCtx.fillText('SCRATCH HERE ♥',r.width/2,r.height/2);
     }
     setupScratch();window.addEventListener('resize',setupScratch);
-    let scratching=false,scratchCelebrated=false,scratchStarted=false;
+
+    // Calculate the exact amount the invitation artwork must travel inside
+    // the phone. This prevents blank space/cropping on different mobile sizes.
+    const invitationImg=document.querySelector('#invitation .phone-screen img');
+    const invitationScreen=document.querySelector('#invitation .phone-screen');
+    function updateInvitationPhoneScroll(){
+      if(!invitationImg||!invitationScreen)return;
+      requestAnimationFrame(()=>{
+        const imageHeight=invitationImg.getBoundingClientRect().height;
+        const screenHeight=invitationScreen.getBoundingClientRect().height;
+        const distance=Math.max(0,imageHeight-screenHeight);
+        invitationImg.style.setProperty('--phone-scroll-distance',distance+'px');
+      });
+    }
+    invitationImg?.addEventListener('load',updateInvitationPhoneScroll);
+    window.addEventListener('resize',updateInvitationPhoneScroll);
+    setTimeout(updateInvitationPhoneScroll,100);
+    setTimeout(updateInvitationPhoneScroll,500);
+
+    let scratching=false,scratchCelebrated=false,scratchStarted=false,scratchStrokes=0,scratchRemoving=false;
     function scratch(e){if(!scratching)return;const r=scratchCanvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;scratchCtx.globalCompositeOperation='destination-out';scratchCtx.beginPath();scratchCtx.arc(x,y,34,0,Math.PI*2);scratchCtx.fill();scratchCtx.beginPath();scratchCtx.arc(x+22,y+4,16,0,Math.PI*2);scratchCtx.fill();}
-    scratchCanvas.addEventListener('pointerdown',e=>{scratching=true;scratchStarted=true;scratchCanvas.classList.add('scratching');scratchCanvas.parentElement.classList.add('scratching');scratchCanvas.setPointerCapture(e.pointerId);scratch(e);if(!scratchCelebrated){scratchCelebrated=true;for(let i=0;i<34;i++)setTimeout(()=>flowerBurst(),i*28)}});
+    function finishScratch(){
+      if(scratchRemoving)return;
+      scratchRemoving=true;
+      scratchCelebrated=true;
+      for(let i=0;i<34;i++)setTimeout(()=>flowerBurst(),i*28);
+      scratchCanvas.classList.add('scratch-complete');
+      scratchCanvas.style.pointerEvents='none';
+      setTimeout(()=>{
+        scratchCanvas.style.display='none';
+        scratchCtx.clearRect(0,0,scratchCanvas.width,scratchCanvas.height);
+      },650);
+    }
+    scratchCanvas.addEventListener('pointerdown',e=>{
+      if(scratchRemoving)return;
+      scratching=true;
+      scratchStarted=true;
+      scratchStrokes++;
+      scratchCanvas.classList.add('scratching');
+      scratchCanvas.parentElement.classList.add('scratching');
+      scratchCanvas.setPointerCapture(e.pointerId);
+      scratch(e);
+      if(scratchStrokes>=3)finishScratch();
+    });
     scratchCanvas.addEventListener('pointermove',scratch);scratchCanvas.addEventListener('pointerup',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});scratchCanvas.addEventListener('pointercancel',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});
     function flowerBurst(){const f=document.createElement('div');f.className='celebrate-flower';f.textContent=['🌸','🌺','🌼','🌷','💮','🌹'][Math.floor(Math.random()*6)];f.style.left=(2+Math.random()*96)+'vw';f.style.top=(-8-Math.random()*18)+'vh';f.style.fontSize=(20+Math.random()*20)+'px';f.style.setProperty('--x',(Math.random()*320-160)+'px');f.style.setProperty('--r',(Math.random()*900-450)+'deg');document.body.appendChild(f);setTimeout(()=>f.remove(),4200)}
 
