@@ -715,13 +715,13 @@ img{
     max-height:none !important;
     object-fit:initial !important;
     object-position:top center !important;
-    transform:translateY(0) !important;
+    transform:translateY(0);
     animation:none !important;
     will-change:transform;
   }
 
   #invitation .phone.phone-scroll-active .phone-screen img{
-    animation:invitationSlowScrollMobile 18s cubic-bezier(.25,.65,.25,1) 0.4s 1 forwards !important;
+    animation:invitationSlowScrollMobile 5s linear 0.25s 1 forwards !important;
   }
 
   #invitation .intro-copy{
@@ -1491,9 +1491,13 @@ img{
         const screenHeight=invitationScreen.clientHeight;
         const naturalW=invitationImg.naturalWidth||1;
         const naturalH=invitationImg.naturalHeight||1;
+        // Render at the exact phone-screen width and calculate the exact
+        // bottom edge so the final frame shows the invitation's last pixel.
         const renderedHeight=screenWidth*(naturalH/naturalW);
-        const distance=Math.max(0,renderedHeight-screenHeight);
-        invitationImg.style.setProperty('--phone-scroll-end',(-Math.round(distance))+'px');
+        const distance=Math.max(0,Math.ceil(renderedHeight-screenHeight));
+        invitationImg.style.width='100%';
+        invitationImg.style.height='auto';
+        invitationImg.style.setProperty('--phone-scroll-end',(-distance)+'px');
       });
     }
     invitationImg?.addEventListener('load',updateInvitationPhoneScroll);
