@@ -720,8 +720,22 @@ img{
     will-change:transform;
   }
 
+  /* JS controls the artwork movement so there is no CSS/JS transform conflict. */
   #invitation .phone.phone-scroll-active .phone-screen img{
-    animation:invitationSlowScrollMobile 5s linear 0.25s 1 forwards !important;
+    animation:none !important;
+  }
+
+  #invitation .phone-screen{
+    display:block !important;
+  }
+
+  #invitation .phone-screen img{
+    width:100% !important;
+    max-width:100% !important;
+    height:auto !important;
+    margin:0 auto !important;
+    object-fit:contain !important;
+    object-position:top center !important;
   }
 
   #invitation .intro-copy{
@@ -1577,7 +1591,9 @@ img{
                 ? 2*progress*progress
                 : 1-Math.pow(-2*progress+2,2)/2;
 
-              invitationImg.style.transform='translate3d(0,'+(-distance*eased)+'px,0)';
+              /* tiny cinematic scale while the complete artwork travels upward */
+              const scale=1.0+0.008*eased;
+              invitationImg.style.transform='translate3d(0,'+(-distance*eased)+'px,0) scale('+scale+')';
 
               if(progress<1){
                 invitationScrollFrame=requestAnimationFrame(animateInvitation);
