@@ -709,15 +709,19 @@ img{
   #invitation .phone-screen img{
     display:block !important;
     width:100% !important;
-    height:100% !important;
-    min-height:100% !important;
+    height:auto !important;
+    min-height:0 !important;
     max-width:none !important;
     max-height:none !important;
-    object-fit:cover !important;
+    object-fit:initial !important;
     object-position:top center !important;
-    transform:none !important;
+    transform:translateY(0) !important;
     animation:none !important;
-    will-change:auto !important;
+    will-change:transform;
+  }
+
+  #invitation .phone.phone-scroll-active .phone-screen img{
+    animation:invitationSlowScrollMobile 18s cubic-bezier(.25,.65,.25,1) 0.4s 1 forwards !important;
   }
 
   #invitation .intro-copy{
@@ -1178,12 +1182,11 @@ img{
 }
 
 
-/* Invitation artwork moves ONLY inside the phone */
-@keyframes invitationInsidePhoneResponsive{
-  0%,18%{transform:translateY(0)}
-  25%{transform:translateY(0)}
-  72%{transform:translateY(calc(var(--phone-scroll-distance, 0px) * -0.72))}
-  100%{transform:translateY(calc(var(--phone-scroll-distance, 0px) * -1))}
+/* Invitation artwork: starts when the phone opens/enters view,
+   pauses briefly at the top, then slowly travels all the way upward. */
+@keyframes invitationSlowScrollMobile{
+  0%,8%{transform:translateY(0)}
+  100%{transform:translateY(var(--phone-scroll-end,0px))}
 }
 
 /* Scratch card: maximum 3 strokes, then reveal automatically */
@@ -1490,7 +1493,7 @@ img{
         const naturalH=invitationImg.naturalHeight||1;
         const renderedHeight=screenWidth*(naturalH/naturalW);
         const distance=Math.max(0,renderedHeight-screenHeight);
-        invitationImg.style.setProperty('--phone-scroll-distance',Math.round(distance)+'px');
+        invitationImg.style.setProperty('--phone-scroll-end',(-Math.round(distance))+'px');
       });
     }
     invitationImg?.addEventListener('load',updateInvitationPhoneScroll);
@@ -1531,6 +1534,26 @@ img{
 
     const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.14});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // Start the invitation artwork's slow bottom-to-top movement only when
+    // the invitation section is actually opened/reached on the phone.
+    const invitationSection=document.getElementById('invitation');
+    const invitationPhone=document.querySelector('#invitation .phone');
+    if(invitationSection&&invitationPhone){
+      const startInvitationScroll=()=>{
+        updateInvitationPhoneScroll();
+        invitationPhone.classList.remove('phone-scroll-active');
+        void invitationPhone.offsetWidth;
+        invitationPhone.classList.add('phone-scroll-active');
+      };
+      const invitationObserver=new IntersectionObserver(entries=>{
+        if(entries.some(e=>e.isIntersecting)){
+          startInvitationScroll();
+          invitationObserver.disconnect();
+        }
+      },{threshold:.35});
+      invitationObserver.observe(invitationSection);
+    }
 
     function petal(){
       const p=document.createElement('div');p.className='petal';p.textContent=Math.random()>.5?'✿':'❀';
