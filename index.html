@@ -376,6 +376,808 @@
   .phone-screen{transform:translateZ(0);contain:strict}
   #invitation .phone-screen img{backface-visibility:hidden}
 }
+
+
+
+/* =========================================================
+   FINAL RESPONSIVE OVERHAUL
+   Prevents clipping/hidden content on every screen size
+   ========================================================= */
+
+html,body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+img{
+  max-width:100%;
+}
+
+.section{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+.section > *{
+  min-width:0;
+  box-sizing:border-box;
+}
+
+
+/* ---------- TABLET / SMALL LAPTOP ---------- */
+
+@media (min-width:801px) and (max-width:1200px){
+
+  .section{
+    padding-left:35px;
+    padding-right:35px;
+  }
+
+  .intro{
+    gap:35px;
+  }
+
+  .phone{
+    width:min(320px,38vw);
+    height:min(650px,78vh);
+  }
+
+  .intro-copy{
+    max-width:430px;
+    margin-left:15px;
+  }
+
+  .story-grid{
+    width:min(100%,1000px);
+    gap:40px;
+  }
+
+  .events-inner{
+    width:100%;
+  }
+
+  .event-grid{
+    gap:12px;
+  }
+
+  .event{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .event .day{
+    font-size:12px;
+    letter-spacing:1px;
+  }
+
+  .event .time{
+    font-size:16px;
+  }
+}
+
+
+/* ---------- TABLET ---------- */
+
+@media (min-width:601px) and (max-width:800px){
+
+  .section{
+    min-height:100svh;
+    height:auto;
+    padding:65px 28px;
+    overflow:hidden;
+  }
+
+  .intro{
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+  }
+
+  #invitation .phone{
+    width:min(290px,42vw) !important;
+    height:min(600px,76vh) !important;
+    min-height:0 !important;
+    flex:0 0 auto;
+  }
+
+  .intro-copy{
+    width:42%;
+    max-width:380px;
+    margin-left:0;
+    text-align:left;
+  }
+
+  .story-grid{
+    width:100%;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+  }
+
+  .story-card{
+    padding:5px;
+  }
+
+  .story-card p{
+    font-size:18px;
+  }
+
+  .event-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;
+    gap:14px;
+  }
+
+  .event{
+    min-width:0;
+    min-height:255px;
+    padding:24px 13px 22px;
+  }
+
+  /* NEVER let the events title get clipped */
+  #events .events-inner,
+  #events .events-title{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+
+  #events .events-title.reveal{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    animation:none !important;
+  }
+
+  #events .events-title h2{
+    width:100%;
+    max-width:100%;
+    font-size:clamp(38px,6vw,52px) !important;
+    line-height:1.08;
+    white-space:normal !important;
+    overflow-wrap:normal;
+  }
+}
+
+
+/* ---------- ALL PHONES ---------- */
+
+@media (max-width:600px){
+
+  html{
+    width:100%;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
+  }
+
+  body{
+    width:100%;
+    overflow-x:hidden;
+  }
+
+  .section{
+    width:100%;
+    min-height:100svh;
+    height:auto;
+    padding:58px 15px;
+    overflow:hidden;
+  }
+
+  .section > *{
+    max-width:100%;
+    min-width:0;
+  }
+
+  .ornament{
+    inset:9px !important;
+  }
+
+
+  /* HOME */
+
+  #home{
+    padding:45px 14px 55px;
+  }
+
+  #home .cover-content{
+    width:100%;
+    max-width:100%;
+    padding:0 4px;
+  }
+
+  #home h1{
+    width:100%;
+    font-size:clamp(52px,16vw,82px);
+    line-height:.9;
+    overflow:visible;
+  }
+
+  #home .eyebrow{
+    font-size:9px;
+    letter-spacing:3px;
+    white-space:normal;
+  }
+
+  #home .date-line{
+    width:100%;
+    font-size:9px;
+    letter-spacing:1.8px;
+    line-height:1.5;
+    white-space:normal;
+  }
+
+  #home .place{
+    font-size:16px;
+  }
+
+  #home .countdown{
+    width:100%;
+    max-width:350px;
+    gap:6px;
+  }
+
+  #home .count-box{
+    flex:1 1 0;
+    min-width:0;
+    padding:8px 3px;
+  }
+
+  #home .count-box b{
+    font-size:19px;
+  }
+
+  #home .count-box span{
+    font-size:7px;
+    letter-spacing:1px;
+  }
+
+
+  /* LOADER */
+
+  .loader-inner{
+    width:100%;
+    max-width:100%;
+    padding:18px;
+  }
+
+  .ganesh{
+    width:108px;
+    height:108px;
+  }
+
+  .ganesh span{
+    font-size:48px;
+  }
+
+  .loader h2{
+    font-size:clamp(38px,12vw,54px) !important;
+    white-space:normal;
+  }
+
+  .loader p{
+    max-width:92%;
+    margin:8px auto 0;
+    font-size:9px !important;
+    letter-spacing:2px !important;
+    line-height:1.6;
+  }
+
+
+  /* INVITATION / PHONE */
+
+  #invitation.intro{
+    width:100%;
+    min-height:100svh;
+    height:auto;
+    padding:55px 15px 65px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:26px;
+    overflow:hidden;
+  }
+
+  #invitation .phone{
+    width:min(285px,82vw) !important;
+    height:min(555px,67svh) !important;
+    min-height:420px !important;
+    max-width:285px !important;
+    flex:0 0 auto;
+    border:9px solid #2b2524 !important;
+    border-radius:34px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  #invitation .phone-screen{
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+
+  #invitation .phone-screen img{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-width:none !important;
+    object-fit:initial !important;
+    object-position:top center !important;
+    animation:invitationInsidePhoneResponsive 10s cubic-bezier(.25,.7,.25,1) infinite !important;
+  }
+
+  #invitation .intro-copy{
+    width:100%;
+    max-width:430px;
+    margin:0 !important;
+    padding:0 8px !important;
+    text-align:center;
+  }
+
+  #invitation .intro-copy h2{
+    width:100%;
+    font-size:clamp(31px,8.8vw,44px);
+    line-height:1.08;
+  }
+
+  #invitation .intro-copy .script{
+    font-size:clamp(37px,10vw,53px);
+  }
+
+  #invitation .intro-copy p{
+    width:100%;
+    font-size:16px;
+    line-height:1.5;
+    margin:15px 0;
+  }
+
+
+  /* SCRATCH */
+
+  #scratch{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  #scratch .scratch-wrap{
+    width:100%;
+    max-width:100%;
+  }
+
+  #scratch h2{
+    font-size:clamp(34px,9vw,48px);
+  }
+
+  #scratch .scratch-card{
+    width:min(340px,88vw);
+    height:min(340px,88vw);
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+
+  /* STORY */
+
+  #story{
+    padding-left:16px;
+    padding-right:16px;
+  }
+
+  #story .story-grid{
+    width:100%;
+    grid-template-columns:1fr;
+    gap:32px;
+  }
+
+  #story .story-image{
+    width:100%;
+    max-width:420px;
+    margin:0 auto;
+  }
+
+  #story .story-card{
+    width:100%;
+    max-width:500px;
+    margin:0 auto;
+    padding:0 5px;
+    text-align:center;
+  }
+
+  #story .story-card h2{
+    font-size:clamp(33px,9vw,48px);
+  }
+
+  #story .story-card p{
+    font-size:17px;
+    line-height:1.5;
+  }
+
+
+  /* =====================================================
+     EVENTS — MAIN MOBILE FIX
+     ===================================================== */
+
+  #events{
+    width:100%;
+    min-height:100svh;
+    height:auto;
+    padding:60px 12px 70px;
+    overflow:visible !important;
+  }
+
+  #events .events-inner{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    margin:0 auto;
+    text-align:center;
+    overflow:visible;
+  }
+
+  #events .events-title{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin:0 auto 28px;
+    padding:0 4px;
+    text-align:center;
+  }
+
+  #events .events-title.reveal{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    animation:none !important;
+  }
+
+  #events .events-title .section-kicker{
+    display:block;
+    width:100%;
+    font-size:9px;
+    letter-spacing:2.5px;
+    line-height:1.5;
+    margin-bottom:9px;
+  }
+
+  #events .events-title h2{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    padding:0 !important;
+
+    /* THIS prevents "Four beautiful moments" from disappearing */
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    word-break:normal !important;
+    overflow-wrap:break-word !important;
+
+    font-size:clamp(32px,8.8vw,46px) !important;
+    line-height:1.08 !important;
+    letter-spacing:-.5px;
+  }
+
+  #events .event-grid{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    width:100% !important;
+    max-width:500px !important;
+    margin:0 auto !important;
+    gap:15px;
+  }
+
+  #events .event-grid.reveal{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+  }
+
+  #events .event{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    min-height:0;
+    padding:25px 16px 22px;
+    overflow:visible;
+  }
+
+  #events .event h3{
+    font-size:38px;
+  }
+
+  #events .event .day{
+    font-size:10px;
+    letter-spacing:1.2px;
+    line-height:1.5;
+  }
+
+  #events .event .time{
+    font-size:16px;
+  }
+
+  #events .event small{
+    display:block;
+    width:100%;
+    min-height:0;
+    line-height:1.5;
+  }
+
+  #events .event-map{
+    max-width:100%;
+    white-space:nowrap;
+  }
+
+
+  /* VENUE */
+
+  #venue{
+    padding:60px 15px 70px;
+  }
+
+  #venue .venue-inner{
+    width:100%;
+    max-width:100%;
+  }
+
+  #venue .venue-inner > h2{
+    width:100%;
+    font-size:clamp(34px,9vw,48px);
+  }
+
+  #venue .venue-box{
+    width:100%;
+    max-width:430px;
+    margin:25px auto;
+    padding:34px 16px;
+  }
+
+  #venue .venue-address{
+    font-size:18px;
+    line-height:1.45;
+  }
+
+  #venue .map-btn{
+    max-width:100%;
+    white-space:normal;
+    text-align:center;
+  }
+
+  #venue .calendar{
+    width:100%;
+    max-width:340px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  #venue .calendar-grid{
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:3px;
+  }
+
+
+  /* CLOSING */
+
+  #closing{
+    padding:65px 16px;
+  }
+
+  #closing .closing-content{
+    width:100%;
+    max-width:500px;
+  }
+
+  #closing .section-kicker{
+    width:100%;
+    line-height:1.5;
+  }
+
+  #closing h2{
+    font-size:clamp(41px,11vw,62px);
+  }
+
+  #closing p{
+    font-size:17px;
+    line-height:1.5;
+  }
+
+  #closing .family{
+    font-size:38px;
+    line-height:1.15;
+  }
+
+
+  /* BUTTONS */
+
+  .map-btn,
+  .event-map,
+  .enter,
+  .top-btn,
+  .open-seal{
+    -webkit-user-select:none;
+    user-select:none;
+    touch-action:manipulation;
+  }
+
+}
+
+
+/* ---------- VERY SMALL PHONES ---------- */
+
+@media (max-width:380px){
+
+  .section{
+    padding-left:11px;
+    padding-right:11px;
+  }
+
+  #home h1{
+    font-size:clamp(46px,15.5vw,62px);
+  }
+
+  #home .count-box b{
+    font-size:16px;
+  }
+
+  #home .count-box span{
+    font-size:6.5px;
+  }
+
+  #invitation .phone{
+    width:255px !important;
+    height:500px !important;
+    min-height:0 !important;
+  }
+
+  #events{
+    padding-left:9px;
+    padding-right:9px;
+  }
+
+  #events .events-title h2{
+    font-size:31px !important;
+  }
+
+  #events .event{
+    padding-left:13px;
+    padding-right:13px;
+  }
+
+  #venue .calendar{
+    max-width:305px;
+  }
+}
+
+
+/* ---------- 320px AND BELOW ---------- */
+
+@media (max-width:330px){
+
+  #home h1{
+    font-size:45px;
+  }
+
+  #home .eyebrow{
+    font-size:8px;
+    letter-spacing:2px;
+  }
+
+  #invitation .phone{
+    width:235px !important;
+    height:465px !important;
+  }
+
+  #events .events-title h2{
+    font-size:29px !important;
+  }
+
+  #events .event h3{
+    font-size:34px;
+  }
+}
+
+
+/* ---------- LANDSCAPE PHONES ---------- */
+
+@media (max-width:800px) and (orientation:landscape){
+
+  .section{
+    min-height:auto;
+  }
+
+  #home{
+    min-height:100svh;
+  }
+
+  #home .cover-content{
+    transform:scale(.78);
+  }
+
+  #home .scroll-cue{
+    display:none;
+  }
+
+  #invitation.intro{
+    min-height:100svh;
+    flex-direction:row;
+    padding:30px 20px;
+    gap:25px;
+  }
+
+  #invitation .phone{
+    width:215px !important;
+    height:calc(100svh - 50px) !important;
+    min-height:0 !important;
+  }
+
+  #invitation .intro-copy{
+    max-width:360px;
+    text-align:left;
+  }
+
+  #invitation .intro-copy p{
+    font-size:14px;
+  }
+
+  #events .event-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    max-width:700px !important;
+  }
+}
+
+
+/* ---------- TOUCH DEVICES ---------- */
+
+@media (hover:none) and (pointer:coarse){
+
+  .event:hover,
+  .story-image:hover,
+  .calendar:hover,
+  .scratch-card:hover,
+  .map-btn:hover,
+  .enter:hover{
+    transform:none;
+  }
+
+  .event-map,
+  .map-btn,
+  .enter,
+  .top-btn{
+    min-height:44px;
+  }
+}
+
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+
+/* Invitation artwork moves ONLY inside the phone */
+@keyframes invitationInsidePhoneResponsive{
+  0%,18%{transform:translateY(0)}
+  25%{transform:translateY(0)}
+  70%{transform:translateY(-30%)}
+  88%{transform:translateY(-36%)}
+  100%{transform:translateY(-38%)}
+}
+
 </style></style>
 </head>
 <body class="locked">
@@ -500,7 +1302,10 @@
       const p=document.createElement('div');p.className='petal';p.textContent=Math.random()>.5?'✿':'❀';
       p.style.left=Math.random()*100+'vw';p.style.fontSize=(10+Math.random()*14)+'px';p.style.color=Math.random()>.5?'#8d2940':'#b48745';p.style.setProperty('--drift',(Math.random()*180-90)+'px');p.style.animationDuration=(7+Math.random()*7)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),15000)
     }
-    setInterval(petal,850);for(let i=0;i<8;i++)setTimeout(petal,i*250);
+    if(!window.matchMedia('(max-width:800px)').matches){
+      setInterval(petal,850);
+      for(let i=0;i<8;i++)setTimeout(petal,i*250);
+    }
     function updateCountdown(){const target=new Date('2027-01-29T19:00:00+05:30').getTime(),now=Date.now(),diff=Math.max(0,target-now);document.getElementById('cdDays').textContent=Math.floor(diff/86400000);document.getElementById('cdHours').textContent=Math.floor(diff%86400000/3600000);document.getElementById('cdMinutes').textContent=Math.floor(diff%3600000/60000);document.getElementById('cdSeconds').textContent=Math.floor(diff%60000/1000)}updateCountdown();setInterval(updateCountdown,1000);
 
     // Wedding song from the requested YouTube Short. It starts from the Open Invitation click.
