@@ -264,9 +264,10 @@
   #invitation .phone-screen img{
     display:block !important;
     width:100% !important;
-    height:155% !important;
+    height:auto !important;
+    min-height:0 !important;
     max-width:none !important;
-    object-fit:cover !important;
+    object-fit:initial !important;
     object-position:top center !important;
     transform-origin:top center !important;
     animation:invitationInsidePhone 9s cubic-bezier(.25,.7,.25,1) infinite !important;
@@ -356,13 +357,26 @@
     animation:invitationInsidePhone 9s cubic-bezier(.25,.7,.25,1) infinite !important;
   }
 
+  /* Keep the events heading visible and properly sized on mobile */
+  #events .events-title.reveal{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    animation:none !important;
+  }
+  #events .events-title h2{
+    font-size:clamp(34px,9vw,46px) !important;
+    line-height:1.08 !important;
+    white-space:nowrap;
+  }
+
   /* Keep mobile compositing simple */
   .section>*{transform-style:flat !important}
   .phone{transform:translateZ(0) !important}
   .phone-screen{transform:translateZ(0);contain:strict}
   #invitation .phone-screen img{backface-visibility:hidden}
 }
-</style>
+</style></style>
 </head>
 <body class="locked">
   <div class="loader" id="loader">
@@ -472,13 +486,12 @@
     setupScratch();window.addEventListener('resize',setupScratch);
     let scratching=false,scratchCelebrated=false,scratchStarted=false;
     function scratch(e){if(!scratching)return;const r=scratchCanvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;scratchCtx.globalCompositeOperation='destination-out';scratchCtx.beginPath();scratchCtx.arc(x,y,34,0,Math.PI*2);scratchCtx.fill();scratchCtx.beginPath();scratchCtx.arc(x+22,y+4,16,0,Math.PI*2);scratchCtx.fill();}
-    scratchCanvas.addEventListener('pointerdown',e=>{scratching=true;scratchStarted=true;scratchCanvas.classList.add('scratching');scratchCanvas.parentElement.classList.add('scratching');scratchCanvas.setPointerCapture(e.pointerId);scratch(e);if(!scratchCelebrated){scratchCelebrated=true;fireworksBurst();for(let i=0;i<34;i++)setTimeout(()=>flowerBurst(),i*28)}});
-    scratchCanvas.addEventListener('pointermove',scratch);scratchCanvas.addEventListener('pointerup',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});scratchCanvas.addEventListener('pointercancel',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});function fireworksBurst(){for(let i=0;i<8;i++){setTimeout(()=>{const b=document.createElement('div');b.className='firework';b.style.left=(12+Math.random()*76)+'vw';b.style.top=(18+Math.random()*48)+'vh';b.style.setProperty('--sx',(Math.random()*220-110)+'px');b.style.setProperty('--sy',(Math.random()*180-90)+'px');document.body.appendChild(b);setTimeout(()=>b.remove(),1800)},i*110)}}
+    scratchCanvas.addEventListener('pointerdown',e=>{scratching=true;scratchStarted=true;scratchCanvas.classList.add('scratching');scratchCanvas.parentElement.classList.add('scratching');scratchCanvas.setPointerCapture(e.pointerId);scratch(e);if(!scratchCelebrated){scratchCelebrated=true;for(let i=0;i<34;i++)setTimeout(()=>flowerBurst(),i*28)}});
+    scratchCanvas.addEventListener('pointermove',scratch);scratchCanvas.addEventListener('pointerup',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});scratchCanvas.addEventListener('pointercancel',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});
     function flowerBurst(){const f=document.createElement('div');f.className='celebrate-flower';f.textContent=['🌸','🌺','🌼','🌷','💮','🌹'][Math.floor(Math.random()*6)];f.style.left=(2+Math.random()*96)+'vw';f.style.top=(-8-Math.random()*18)+'vh';f.style.fontSize=(20+Math.random()*20)+'px';f.style.setProperty('--x',(Math.random()*320-160)+'px');f.style.setProperty('--r',(Math.random()*900-450)+'deg');document.body.appendChild(f);setTimeout(()=>f.remove(),4200)}
 
     const progress=document.getElementById('progressBar');
-    let progressTick=false;
-    window.addEventListener('scroll',()=>{if(progressTick)return;progressTick=true;requestAnimationFrame(()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(scrollY/Math.max(max,1)*100)+'%';progressTick=false})},{passive:true});
+    window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(scrollY/Math.max(max,1)*100)+'%'});
 
     const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.14});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
@@ -487,7 +500,7 @@
       const p=document.createElement('div');p.className='petal';p.textContent=Math.random()>.5?'✿':'❀';
       p.style.left=Math.random()*100+'vw';p.style.fontSize=(10+Math.random()*14)+'px';p.style.color=Math.random()>.5?'#8d2940':'#b48745';p.style.setProperty('--drift',(Math.random()*180-90)+'px');p.style.animationDuration=(7+Math.random()*7)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),15000)
     }
-    if(!window.matchMedia('(max-width:800px)').matches){setInterval(petal,850);for(let i=0;i<8;i++)setTimeout(petal,i*250);}
+    setInterval(petal,850);for(let i=0;i<8;i++)setTimeout(petal,i*250);
     function updateCountdown(){const target=new Date('2027-01-29T19:00:00+05:30').getTime(),now=Date.now(),diff=Math.max(0,target-now);document.getElementById('cdDays').textContent=Math.floor(diff/86400000);document.getElementById('cdHours').textContent=Math.floor(diff%86400000/3600000);document.getElementById('cdMinutes').textContent=Math.floor(diff%3600000/60000);document.getElementById('cdSeconds').textContent=Math.floor(diff%60000/1000)}updateCountdown();setInterval(updateCountdown,1000);
 
     // Wedding song from the requested YouTube Short. It starts from the Open Invitation click.
