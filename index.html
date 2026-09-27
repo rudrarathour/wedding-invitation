@@ -686,10 +686,15 @@ img{
     min-height:420px !important;
     max-width:285px !important;
     flex:0 0 auto;
+    position:relative !important;
+    display:block !important;
+    box-sizing:border-box !important;
+    background:#111 !important;
     border:9px solid #2b2524 !important;
     border-radius:34px !important;
     overflow:hidden !important;
     transform:none !important;
+    box-shadow:0 25px 65px rgba(35,18,15,.25) !important;
   }
 
   #invitation .phone-screen{
@@ -698,6 +703,7 @@ img{
     width:100% !important;
     height:100% !important;
     overflow:hidden !important;
+    background:#fff8eb !important;
   }
 
   #invitation .phone-screen img{
@@ -1189,14 +1195,13 @@ img{
   pointer-events:none;
 }
 
-/* Keep the mobile invitation artwork inside its phone and scroll by
-   the exact overflow amount, never by a guessed percentage. */
+/* Keep the invitation artwork inside a real phone frame. */
 @media(max-width:800px){
   #invitation .phone{
     isolation:isolate;
   }
   #invitation .phone-screen{
-    contain:layout paint;
+    contain:none !important;
   }
 }
 
@@ -1316,10 +1321,13 @@ img{
     function updateInvitationPhoneScroll(){
       if(!invitationImg||!invitationScreen)return;
       requestAnimationFrame(()=>{
-        const imageHeight=invitationImg.getBoundingClientRect().height;
-        const screenHeight=invitationScreen.getBoundingClientRect().height;
-        const distance=Math.max(0,imageHeight-screenHeight);
-        invitationImg.style.setProperty('--phone-scroll-distance',distance+'px');
+        const screenWidth=invitationScreen.clientWidth;
+        const screenHeight=invitationScreen.clientHeight;
+        const naturalW=invitationImg.naturalWidth||1;
+        const naturalH=invitationImg.naturalHeight||1;
+        const renderedHeight=screenWidth*(naturalH/naturalW);
+        const distance=Math.max(0,renderedHeight-screenHeight);
+        invitationImg.style.setProperty('--phone-scroll-distance',Math.round(distance)+'px');
       });
     }
     invitationImg?.addEventListener('load',updateInvitationPhoneScroll);
