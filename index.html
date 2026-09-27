@@ -1206,6 +1206,85 @@ img{
   }
 }
 
+/* FINAL EVENT + SCRATCH CELEBRATION FIX */
+.celebrate-flower{
+  position:fixed !important;
+  top:-70px !important;
+  z-index:9999 !important;
+  pointer-events:none !important;
+  animation:flowerRainFinal 4.5s cubic-bezier(.2,.72,.25,1) forwards !important;
+  filter:drop-shadow(0 4px 7px rgba(116,29,43,.18));
+}
+@keyframes flowerRainFinal{
+  0%{transform:translate3d(-50%,0,0) scale(.45) rotate(0deg);opacity:0}
+  8%{opacity:1;transform:translate3d(-50%,0,0) scale(1.12) rotate(25deg)}
+  55%{opacity:1}
+  100%{transform:translate3d(calc(-50% + var(--x)),110vh,0) scale(.72) rotate(var(--r));opacity:0}
+}
+
+/* Events must always be visible on touch/mobile devices.
+   The cards still animate in one-by-one without depending on IntersectionObserver. */
+@media (max-width:800px){
+  #events .event-grid.reveal,
+  #events .event-grid.reveal.show{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+  }
+
+  #events .event-grid .event{
+    opacity:1 !important;
+    visibility:visible !important;
+    animation:eventMobileEntrance .8s cubic-bezier(.2,.8,.2,1) both !important;
+    transform:none !important;
+  }
+
+  #events .event-grid .event:nth-child(1){animation-delay:.05s !important}
+  #events .event-grid .event:nth-child(2){animation-delay:.18s !important}
+  #events .event-grid .event:nth-child(3){animation-delay:.31s !important}
+  #events .event-grid .event:nth-child(4){animation-delay:.44s !important}
+
+  #events .event{
+    background:linear-gradient(145deg,rgba(255,251,241,.98),rgba(250,239,216,.94)) !important;
+    border-color:rgba(169,120,53,.42) !important;
+    box-shadow:0 12px 32px rgba(66,20,29,.13) !important;
+  }
+
+  #events .event-icon{
+    animation:eventIconMobile .9s ease-out both !important;
+  }
+
+  #events .event-map{
+    transition:transform .25s ease,box-shadow .25s ease !important;
+  }
+  #events .event-map:active{
+    transform:scale(.96) !important;
+  }
+}
+
+@keyframes eventMobileEntrance{
+  from{opacity:0;transform:translateY(35px) scale(.94) rotateX(6deg)}
+  to{opacity:1;transform:translateY(0) scale(1) rotateX(0)}
+}
+@keyframes eventIconMobile{
+  from{opacity:0;transform:translateY(18px) scale(.65) rotate(-12deg)}
+  65%{transform:translateY(-5px) scale(1.12) rotate(5deg)}
+  to{opacity:1;transform:translateY(0) scale(1) rotate(0)}
+}
+
+/* Desktop/tablet event entrance remains cinematic. */
+.event-grid.show .event{
+  animation:desktopEventEntrance .8s cubic-bezier(.2,.8,.2,1) both;
+}
+.event-grid.show .event:nth-child(1){animation-delay:.05s}
+.event-grid.show .event:nth-child(2){animation-delay:.17s}
+.event-grid.show .event:nth-child(3){animation-delay:.29s}
+.event-grid.show .event:nth-child(4){animation-delay:.41s}
+@keyframes desktopEventEntrance{
+  from{opacity:0;transform:translateY(30px) rotateX(8deg) scale(.96)}
+  to{opacity:1;transform:none}
+}
+
 </style></style>
 </head>
 <body class="locked">
@@ -1362,7 +1441,7 @@ img{
       if(scratchStrokes>=3)finishScratch();
     });
     scratchCanvas.addEventListener('pointermove',scratch);scratchCanvas.addEventListener('pointerup',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});scratchCanvas.addEventListener('pointercancel',()=>{scratching=false;scratchCanvas.parentElement.classList.remove('scratching');scratchCtx.globalCompositeOperation='source-over'});
-    function flowerBurst(){const f=document.createElement('div');f.className='celebrate-flower';f.textContent=['🌸','🌺','🌼','🌷','💮','🌹'][Math.floor(Math.random()*6)];f.style.left=(2+Math.random()*96)+'vw';f.style.top=(-8-Math.random()*18)+'vh';f.style.fontSize=(20+Math.random()*20)+'px';f.style.setProperty('--x',(Math.random()*320-160)+'px');f.style.setProperty('--r',(Math.random()*900-450)+'deg');document.body.appendChild(f);setTimeout(()=>f.remove(),4200)}
+    function flowerBurst(){const f=document.createElement('div');f.className='celebrate-flower';f.textContent=['🌸','🌺','🌼','🌷','💮','🌹'][Math.floor(Math.random()*6)];f.style.left=(2+Math.random()*96)+'vw';f.style.top='-70px';f.style.fontSize=(20+Math.random()*20)+'px';f.style.setProperty('--x',(Math.random()*320-160)+'px');f.style.setProperty('--r',(Math.random()*900-450)+'deg');f.style.animationDuration=(3.8+Math.random()*1.8)+'s';document.body.appendChild(f);setTimeout(()=>f.remove(),6500)}
 
     const progress=document.getElementById('progressBar');
     window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(scrollY/Math.max(max,1)*100)+'%'});
