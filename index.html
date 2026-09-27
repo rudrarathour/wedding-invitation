@@ -1491,12 +1491,15 @@ img{
         const screenHeight=invitationScreen.clientHeight;
         const naturalW=invitationImg.naturalWidth||1;
         const naturalH=invitationImg.naturalHeight||1;
-        // Render at the exact phone-screen width and calculate the exact
-        // bottom edge so the final frame shows the invitation's last pixel.
-        const renderedHeight=screenWidth*(naturalH/naturalW);
-        const distance=Math.max(0,Math.ceil(renderedHeight-screenHeight));
-        invitationImg.style.width='100%';
+        // Force the real rendered image width, then use its actual rendered
+        // height. This avoids aspect-ratio rounding differences on phones.
+        invitationImg.style.width=screenWidth+'px';
         invitationImg.style.height='auto';
+        const renderedHeight=Math.max(
+          invitationImg.getBoundingClientRect().height,
+          screenWidth*(naturalH/naturalW)
+        );
+        const distance=Math.max(0,Math.ceil(renderedHeight-screenHeight));
         invitationImg.style.setProperty('--phone-scroll-end',(-distance)+'px');
       });
     }
@@ -1539,23 +1542,66 @@ img{
     const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.14});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-    // Start the invitation artwork's slow bottom-to-top movement only when
-    // the invitation section is actually opened/reached on the phone.
+    // MOBILE INVITATION: use JavaScript animation instead of CSS keyframes.
+    // This is reliable on real Android/iPhone browsers and always travels
+    // exactly to the last pixel of the invitation artwork.
     const invitationSection=document.getElementById('invitation');
     const invitationPhone=document.querySelector('#invitation .phone');
-    if(invitationSection&&invitationPhone){
-      const startInvitationScroll=()=>{
+    let invitationScrollStarted=false;
+    let invitationScrollFrame=0;
+
+    function startInvitationScroll(){
+      if(!invitationImg||!invitationScreen||invitationScrollStarted)return;
+      invitationScrollStarted=true;
+
+      const beginWhenReady=()=>{
+        if(!invitationImg.complete || !invitationImg.naturalWidth){
+          invitationImg.addEventListener('load',beginWhenReady,{once:true});
+          return;
+        }
+
         updateInvitationPhoneScroll();
-        invitationPhone.classList.remove('phone-scroll-active');
-        void invitationPhone.offsetWidth;
-        invitationPhone.classList.add('phone-scroll-active');
+
+        requestAnimationFrame(()=>{
+          requestAnimationFrame(()=>{
+            const distance=Math.max(
+              0,
+              Math.ceil(invitationImg.getBoundingClientRect().height-invitationScreen.clientHeight)
+            );
+            const duration=5000;
+            const start=performance.now();
+
+            function animateInvitation(now){
+              const progress=Math.min(1,(now-start)/duration);
+              const eased=progress<0.5
+                ? 2*progress*progress
+                : 1-Math.pow(-2*progress+2,2)/2;
+
+              invitationImg.style.transform='translate3d(0,'+(-distance*eased)+'px,0)';
+
+              if(progress<1){
+                invitationScrollFrame=requestAnimationFrame(animateInvitation);
+              }else{
+                invitationImg.style.transform='translate3d(0,'+(-distance)+'px,0)';
+              }
+            }
+
+            cancelAnimationFrame(invitationScrollFrame);
+            invitationScrollFrame=requestAnimationFrame(animateInvitation);
+          });
+        });
       };
+
+      beginWhenReady();
+    }
+
+    if(invitationSection&&invitationPhone){
       const invitationObserver=new IntersectionObserver(entries=>{
         if(entries.some(e=>e.isIntersecting)){
           startInvitationScroll();
           invitationObserver.disconnect();
         }
-      },{threshold:.35});
+      },{threshold:.25});
       invitationObserver.observe(invitationSection);
     }
 
