@@ -307,6 +307,61 @@
   72%{transform:translateY(-34%)}
   100%{transform:translateY(-38%)}
 }
+/* MOBILE PERFORMANCE MODE — keep visuals, remove frame-heavy effects */
+@media (max-width:800px){
+  html{scroll-behavior:smooth}
+  .section,.section *{will-change:auto}
+  .section::before,.section::after,
+  .cover::after,.intro::after,.closing::after,
+  .section .ornament,
+  .cover-art,
+  .count-box::after,
+  .phone-shine,
+  .music-btn,
+  .top-btn::after,.enter::after,.open-seal::after{
+    animation:none !important;
+  }
+
+  .cover-art{filter:none !important;transform:none !important}
+  .section{background-attachment:scroll !important}
+  .event,.venue-box,.calendar,.story-image,.phone,
+  .cover-content,.intro-copy,.story-card,.events-inner,
+  .venue-inner,.closing-content,.event-icon{
+    animation:none !important;
+    transition:none !important;
+  }
+
+  .event,.venue-box,.calendar,.story-image,.phone{
+    box-shadow:0 10px 28px rgba(53,26,21,.14) !important;
+    filter:none !important;
+    backdrop-filter:none !important;
+  }
+
+  .event:hover,.calendar:hover,.story-image:hover{
+    transform:none !important;
+    box-shadow:0 10px 28px rgba(53,26,21,.14) !important;
+  }
+
+  .cover-content h1,.closing-content .om,.calendar-grid .active{
+    animation:none !important;
+  }
+
+  .reveal.show,.reveal{
+    animation:none !important;
+    transition:none !important;
+  }
+
+  /* Only the invitation artwork itself moves */
+  #invitation .phone-screen img{
+    animation:invitationInsidePhone 9s cubic-bezier(.25,.7,.25,1) infinite !important;
+  }
+
+  /* Keep mobile compositing simple */
+  .section>*{transform-style:flat !important}
+  .phone{transform:translateZ(0) !important}
+  .phone-screen{transform:translateZ(0);contain:strict}
+  #invitation .phone-screen img{backface-visibility:hidden}
+}
 </style>
 </head>
 <body class="locked">
@@ -422,7 +477,8 @@
     function flowerBurst(){const f=document.createElement('div');f.className='celebrate-flower';f.textContent=['🌸','🌺','🌼','🌷','💮','🌹'][Math.floor(Math.random()*6)];f.style.left=(2+Math.random()*96)+'vw';f.style.top=(-8-Math.random()*18)+'vh';f.style.fontSize=(20+Math.random()*20)+'px';f.style.setProperty('--x',(Math.random()*320-160)+'px');f.style.setProperty('--r',(Math.random()*900-450)+'deg');document.body.appendChild(f);setTimeout(()=>f.remove(),4200)}
 
     const progress=document.getElementById('progressBar');
-    window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(scrollY/Math.max(max,1)*100)+'%'});
+    let progressTick=false;
+    window.addEventListener('scroll',()=>{if(progressTick)return;progressTick=true;requestAnimationFrame(()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(scrollY/Math.max(max,1)*100)+'%';progressTick=false})},{passive:true});
 
     const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.14});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
@@ -431,7 +487,7 @@
       const p=document.createElement('div');p.className='petal';p.textContent=Math.random()>.5?'✿':'❀';
       p.style.left=Math.random()*100+'vw';p.style.fontSize=(10+Math.random()*14)+'px';p.style.color=Math.random()>.5?'#8d2940':'#b48745';p.style.setProperty('--drift',(Math.random()*180-90)+'px');p.style.animationDuration=(7+Math.random()*7)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),15000)
     }
-    setInterval(petal,850);for(let i=0;i<8;i++)setTimeout(petal,i*250);
+    if(!window.matchMedia('(max-width:800px)').matches){setInterval(petal,850);for(let i=0;i<8;i++)setTimeout(petal,i*250);}
     function updateCountdown(){const target=new Date('2027-01-29T19:00:00+05:30').getTime(),now=Date.now(),diff=Math.max(0,target-now);document.getElementById('cdDays').textContent=Math.floor(diff/86400000);document.getElementById('cdHours').textContent=Math.floor(diff%86400000/3600000);document.getElementById('cdMinutes').textContent=Math.floor(diff%3600000/60000);document.getElementById('cdSeconds').textContent=Math.floor(diff%60000/1000)}updateCountdown();setInterval(updateCountdown,1000);
 
     // Wedding song from the requested YouTube Short. It starts from the Open Invitation click.
